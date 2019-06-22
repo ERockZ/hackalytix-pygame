@@ -9,22 +9,32 @@ def run_game():
     # initialize game engine, all needed modules
     pgame.init()
 
+    window_width = 600
+    window_height = 600
+
+    # player rectangle dimensions
+    width = window_width / 10
+    height = window_height / 10
+
+    playfield_margin_x = 10
+    playfield_margin_y = 10
+
+
     # set the game's screen size
-    win = pgame.display.set_mode((600, 600))
+    win = pgame.display.set_mode((window_height + playfield_margin_y * 2,
+                                  window_width + playfield_margin_x * 2))
 
     # set screen title
     pgame.display.set_caption("Snake Project - First Trial")
 
     # player start coordinates
-    x = 10
-    y = 10
+    x = playfield_margin_x
+    y = playfield_margin_y
 
-    # player rectangle dimensions
-    width = 50
-    height = 50
 
     # 'velocity'
-    vel = 50
+    vel_x = width
+    vel_y = width
 
     # standard cube color
     color = (255, 0, 0)
@@ -46,13 +56,17 @@ def run_game():
 
         # the four arrow keys for directed movement
         if keys[pgame.K_LEFT]:
-            x -= vel
+            if (x-vel_x >= 0):
+                x -= vel_x
         if keys[pgame.K_RIGHT]:
-            x += vel
+            if (x+vel_x < window_width):
+                x += vel_x
         if keys[pgame.K_UP]:
-            y -= vel
+            if (y-vel_y >= 0):
+                y -= vel_y
         if keys[pgame.K_DOWN]:
-            y += vel
+            if (y+vel_y < window_height):
+                y += vel_y
 
         # the 'c' key -> generate a new color at random
         if keys[pgame.K_c]:
