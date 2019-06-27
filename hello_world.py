@@ -19,22 +19,32 @@ def run_game():
     playfield_margin_x = 10
     playfield_margin_y = 10
 
+    food_coords = generate_random_coords(window_width, window_height, width, height, playfield_margin_x, playfield_margin_y)
+
+    food = (food_coords[0], # x coordinate
+            food_coords[1],# y coordinate
+            width, # width
+            height,# height
+            generate_color()) # the two values, an x-coordinate and a y-coordinate‚
 
     # set the game's screen size
     win = pgame.display.set_mode((window_height + playfield_margin_y * 2,
                                   window_width + playfield_margin_x * 2))
 
     # set screen title
-    pgame.display.set_caption("Snake Project - First Trial")
+    pgame.display.set_caption("Snake Project")
 
     # player start coordinates
+
+    #x, y = generate_random_coords(window_width, window_height, width, height)
+
     x = playfield_margin_x
     y = playfield_margin_y
 
 
     # 'velocity'
     vel_x = width
-    vel_y = width
+    vel_y = height
 
     # standard cube color
     color = (255, 0, 0)
@@ -72,9 +82,7 @@ def run_game():
         if keys[pgame.K_c]:
             # Generate a random color by drawing 3 random integers between 0 and 255.
             # One for each color channel represented by a triple (R,G,B)
-            color = (random.randint(0, 255),
-                     random.randint(0, 255),
-                     random.randint(0, 255))
+            color = generate_color()
 
         # the 'q' key --> end the game loop
         if keys[pgame.K_q]:
@@ -84,7 +92,11 @@ def run_game():
         win.fill((0, 0, 0))
 
         # rect(Surface, color, Rect, width=0)
+        draw_food(win, food)
         pgame.draw.rect(win, color, (x, y, width, height))
+
+
+        food = check_food_touched(food, (x, y), window_width, window_height, width, height, playfield_margin_x, playfield_margin_x)
 
         # pygame module to control the display window and screen
         pgame.display.update()
@@ -95,6 +107,46 @@ def run_game():
     # quit the game, return an 'exit code' of 0
     pgame.quit()
     return 0
+
+def check_food_touched(food, player, window_width, window_height, width, height, margin_x, margin_y):
+    print(player[0], player[1])
+    print(food[0], food[1])
+    if (food[0] == player[0] and food[1] == player[1]):
+        food_coords = generate_random_coords(window_width, window_height, width, height, margin_x, margin_y)
+        food = (food_coords[0],
+                food_coords[1],
+                width, # width
+                height,# height
+                generate_color()) # the two values, an x-coordinate and a y-coordinate
+    return food
+
+def generate_random_coords(window_width, window_height, object_width, object_height, margin_x, margin_y):
+    """
+    will generate random coordinates which are aligned with the grid imposed onto the playfield
+    :param window_width:
+    :param window_height:
+    :param object_width:
+    :param object_height:
+    :return: (x, y)
+    """
+    x = random.randint(0, window_width // object_width - 1)
+    y = random.randint(0, window_height // object_height - 1)
+    return x*object_width + margin_x, y*object_height + margin_y
+
+
+def generate_color():
+    return (random.randint(100, 255),
+            random.randint(100, 255),
+            random.randint(100, 255))
+
+def draw_food(window, food):
+    food_x = food[0]
+    food_y = food[1]
+    food_with = food[2]
+    food_height = food[3]
+    color = food[4]
+    pgame.draw.rect(window, color, (food_x, food_y, food_with, food_height))
+
 
 
 if __name__ == "__main__":
